@@ -9,7 +9,7 @@ Playground for an automated build tool in Go.
  1. Create a .build directory in your Go project
  1. Create `.build/main.go `
  1. Add `mango tasks` in your main file
- 1. Build your project with `go run .build`
+ 1. Build your project with `go run .build/*`
 
 ## Components
 Mango uses several components that you should understand before you can use it effectively.
@@ -23,5 +23,28 @@ The mango `task` is how you, the person creating an automated build script, inte
 ### The Build Files
 The mango `build` files is collection of one or more Go source files.  Each file, in turn, is made up of a mix of mango tasks and other Go constructs that specify how the build flow should work.  The entry point for a build should be defined in a Go file called `main.go` with a function `func main()` defined.
 
-### The .build Directory
-All mango build files should be stored (as a convention) in a `.build` at the root level of the project.  The build step can then be launched using `go run .build`.
+### The .mango Directory
+All mango build files should be stored (as a convention) in a `.mango` directory at the root level of your Go project.  The build step can then be launched using `go run .mango`.
+
+## Using Mango
+The first step is to create a directory in your Go project called `.mango`.  Next, create `.mango/main.go` with the following content.
+```
+package main
+
+import "github.com/vladimirvivien/mango
+
+func task2(){
+
+}
+
+mango.Builder = mango.GoBuilder
+
+project := mango.NewProject("project")
+
+mango.AddTask(func(ctx context){...})
+mango.AddParallelTasks(func2, func3)
+
+func main() {
+
+}
+```
