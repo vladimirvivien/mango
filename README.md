@@ -89,9 +89,40 @@ func main() {
 }
 ```
 In the previous example, task `prepare` depends on `clean`.  Note, however, only `prepare` is added to the execution graph.
+### Specify Default Tasks
+By default, when `manfo.Run()` is invoked, mango will execute all tasks in the execution graph in the order they were added.  Howver, `Run()` may receive a list of tasks to execute.
+```
+var goblr := mango.GoBuilder
+
+func prepare() {
+    mango.Env("TEST_BUILD", "TRUE")
+}
+
+func clean() {
+    mango.RmDir("./_output")
+}
+
+func getGoPkgs(){
+    goblr.Get("github.com/user/go-pkg")
+}
+
+func build(){
+    getGoPkgs()
+    goblr.Build()
+}
+
+func main() {
+    mango.Add(clean)
+    mango.Add(prepare)
+    mango.Add(goblr)
+    mango.Add(all)
+    mango.Run(clean,prepare,build)
+}
+```
+
 ### Specify Tasks from CLI
-By default, all tasks added to the task graph of mango will get executed.  You may, however, limit your execution to specific tasks by specifiying a task list from the command line.
+You may specify task execution from the command line by providing a list of tasks that will override the task list in the mango source code.
 ```
-$> go run .mango/* -t clean
+$> go run .mango/* -t "clean, getGoPkgs"
 ```
-The previous command will only execute task `clean` as defined in the mango source.
+The previous command will only execute task `clean` followed by `getGoPkgs` as defined in the mango source.
